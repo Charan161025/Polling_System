@@ -1,9 +1,14 @@
-
 @extends('layout')
+
 @section('content')
-<h3>Login</h3>
-<input id="email" class="form-control mb-2" placeholder="Email">
-<input id="password" type="password" class="form-control mb-2" placeholder="Password">
-<button onclick="login()" class="btn btn-primary">Login</button>
-<p id="msg" class="text-danger"></p>
+<h2>Login</h2>
+
+<div id="error" style="color:red;"></div>
+
+<form id="loginForm">
+  @csrf
+  <input type="email" name="email" placeholder="Email" required><br><br>
+  <input type="password" name="password" placeholder="Password" required><br><br>
+  <button type="submit">Login</button>
+</form>
 @endsection
