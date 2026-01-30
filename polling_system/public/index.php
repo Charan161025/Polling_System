@@ -1,16 +1,24 @@
-
 <?php
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+use Illuminate\Database\Capsule\Manager as Capsule;
 
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+// Load env
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->safeLoad();
 
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
+// SQLite DB
+$capsule = new Capsule;
+$capsule->addConnection([
+    'driver' => 'sqlite',
+    'database' => __DIR__ . '/../database/database.sqlite',
+    'prefix' => '',
+]);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
 
-$response->send();
+// Simple router
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$kernel->terminate($request, $response);
+require __DIR__ . '/../routes/web.php';
