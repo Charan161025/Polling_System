@@ -1,16 +1,43 @@
-
 <?php
+
 use App\Http\Controllers\MainController;
-use Illuminate\Support\Facades\Route;
 
-Route::get('/', [MainController::class,'loginView']);
-Route::post('/login', [MainController::class,'login']);
+$controller = new MainController();
 
-Route::middleware('auth')->group(function () {
-    Route::get('/polls',[MainController::class,'polls']);
-    Route::get('/poll/{id}',[MainController::class,'pollView']);
-    Route::post('/vote',[MainController::class,'vote']);
-    Route::get('/results/{id}',[MainController::class,'results']);
-    Route::get('/admin',[MainController::class,'admin']);
-    Route::post('/release',[MainController::class,'release']);
-});
+switch ($uri) {
+    case '/':
+        echo $controller->loginView();
+        break;
+
+    case '/login':
+        echo $controller->login($_POST);
+        break;
+
+    case '/polls':
+        echo $controller->polls();
+        break;
+
+    case (preg_match('/\/poll\/(\d+)/', $uri, $m) ? true : false):
+        echo $controller->pollView($m[1]);
+        break;
+
+    case '/vote':
+        echo $controller->vote($_POST);
+        break;
+
+    case (preg_match('/\/results\/(\d+)/', $uri, $m) ? true : false):
+        echo $controller->results($m[1]);
+        break;
+
+    case '/admin':
+        echo $controller->admin();
+        break;
+
+    case '/release':
+        echo $controller->release($_POST);
+        break;
+
+    default:
+        http_response_code(404);
+        echo "404 Not Found";
+}
