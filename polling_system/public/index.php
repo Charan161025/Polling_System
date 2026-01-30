@@ -3,7 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-require __DIR__ . '/../routes/web.php';
+
 
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
