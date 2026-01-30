@@ -1,7 +1,6 @@
 <?php
-
+require __DIR__ . '/../routes/web.php';
 use App\Http\Controllers\MainController;
-
 $controller = new MainController();
 
 switch ($uri) {
