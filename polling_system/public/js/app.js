@@ -1,42 +1,64 @@
 
 function login(){
- $.post('/login',{
-   email:$('#email').val(),
-   password:$('#password').val(),
-   _token:$('meta[name=csrf-token]').attr('content')
- },
- res=>{
-   if(res.success) location.href='/polls';
-   else $('#msg').text(res.error);
- });
+    $.post('/login', {
+        email: $('#email').val(),
+        password: $('#password').val()
+    }, function(res){
+        if(res.success) {
+            location.href = '/polls';
+        } else {
+            $('#msg').text(res.error);
+        }
+    });
 }
 
 function loadPoll(id){
- $.get('/poll/'+id,res=>$('#content').html(res));
+    $.get('/poll/' + id, function(res){
+        $('#content').html(res);
+        startResultsPolling();
+    });
 }
 
-function vote(pollId,optionId){
- $.post('/vote',{
-   poll_id:pollId,
-   option_id:optionId,
-   _token:$('meta[name=csrf-token]').attr('content')
- },
- res=>$('#message').text(res.error ?? 'Vote submitted'));
+function vote(pollId, optionId){
+    $.post('/vote', {
+        poll_id: pollId,
+        option_id: optionId
+    }, function(res){
+        var msgDiv = $('#message');
+        if(res.error) {
+            msgDiv.removeClass('alert-success').addClass('alert-danger').text(res.error).show();
+        } else {
+            msgDiv.removeClass('alert-danger').addClass('alert-success').text('Vote submitted successfully!').show();
+            loadResults(pollId);
+        }
+    });
 }
 
-setInterval(()=>{
- let id=$('#pollId').val();
- if(!id) return;
- $.get('/results/'+id,data=>{
-  let h='';
-  data.forEach(r=>h+=`<p>${r.option_text}: ${r.total}</p>`);
-  $('#results').html(h);
- });
-},1000);
+function loadResults(pollId){
+    $.get('/results/' + pollId, function(data){
+        var html = '';
+        data.forEach(function(r){
+            html += '<p><strong>' + r.option_text + ':</strong> ' + r.total + ' votes</p>';
+        });
+        $('#results').html(html);
+    });
+}
+
+var resultsInterval;
+function startResultsPolling(){
+    clearInterval(resultsInterval);
+    resultsInterval = setInterval(function(){
+        var id = $('#pollId').val();
+        if(id) {
+            loadResults(id);
+        }
+    }, 1000);
+}
 
 function release(id){
- $.post('/release',{
-   vote_id:id,
-   _token:$('meta[name=csrf-token]').attr('content')
- },()=>location.reload());
+    $.post('/release', {
+        vote_id: id
+    }, function(){
+        location.reload();
+    });
 }
