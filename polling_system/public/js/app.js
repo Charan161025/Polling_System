@@ -1,15 +1,29 @@
-
 function login(){
-    $.post('/login', {
-        email: $('#email').val(),
-        password: $('#password').val()
-    }, function(res){
-        if(res.success) {
-            location.href = '/polls';
-        } else {
-            $('#msg').text(res.error);
+    var email = $('#email').val();
+    var password = $('#password').val();
+    
+    $.ajax({
+        url: '/login',
+        type: 'POST',
+        data: {
+            email: email,
+            password: password
+        },
+        dataType: 'json',
+        success: function(res){
+            console.log('Login response:', res); // Debug
+            if(res.success) {
+                window.location.href = '/polls';
+            } else {
+                $('#msg').text(res.error || 'Login failed');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error('Login error:', error);
+            $('#msg').text('Login failed. Please try again.');
         }
     });
+    return false;
 }
 
 function loadPoll(id){
@@ -17,19 +31,26 @@ function loadPoll(id){
         $('#content').html(res);
         startResultsPolling();
     });
+    return false;
 }
 
 function vote(pollId, optionId){
-    $.post('/vote', {
-        poll_id: pollId,
-        option_id: optionId
-    }, function(res){
-        var msgDiv = $('#message');
-        if(res.error) {
-            msgDiv.removeClass('alert-success').addClass('alert-danger').text(res.error).show();
-        } else {
-            msgDiv.removeClass('alert-danger').addClass('alert-success').text('Vote submitted successfully!').show();
-            loadResults(pollId);
+    $.ajax({
+        url: '/vote',
+        type: 'POST',
+        data: {
+            poll_id: pollId,
+            option_id: optionId
+        },
+        dataType: 'json',
+        success: function(res){
+            var msgDiv = $('#message');
+            if(res.error) {
+                msgDiv.removeClass('alert-success').addClass('alert-danger').text(res.error).show();
+            } else {
+                msgDiv.removeClass('alert-danger').addClass('alert-success').text('Vote submitted successfully!').show();
+                loadResults(pollId);
+            }
         }
     });
 }
@@ -37,9 +58,11 @@ function vote(pollId, optionId){
 function loadResults(pollId){
     $.get('/results/' + pollId, function(data){
         var html = '';
-        data.forEach(function(r){
-            html += '<p><strong>' + r.option_text + ':</strong> ' + r.total + ' votes</p>';
-        });
+        if(data && data.length > 0) {
+            data.forEach(function(r){
+                html += '<p><strong>' + r.option_text + ':</strong> ' + r.total + ' votes</p>';
+            });
+        }
         $('#results').html(html);
     });
 }
