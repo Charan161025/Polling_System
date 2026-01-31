@@ -5,8 +5,8 @@ CREATE TABLE users (
   password TEXT
 );
 
-INSERT INTO users (name,email,password)
-VALUES ('Admin','admin@test.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+INSERT INTO users (name, email, password)
+VALUES ('Admin', 'admin@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 CREATE TABLE polls (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,8 +37,9 @@ CREATE TABLE vote_history (
   timestamp TEXT
 );
 
-INSERT INTO polls VALUES (1,'Who is best cricketer?','active');
-INSERT INTO options VALUES
-(1,1,'Virat Kohli'),
-(2,1,'Rohit Sharma'),
-(3,1,'MS Dhoni');
+INSERT INTO polls (id, question, status) VALUES (1, 'Who is the best cricketer?', 'active');
+
+INSERT INTO options (id, poll_id, option_text) VALUES
+(1, 1, 'Virat Kohli'),
+(2, 1, 'Rohit Sharma'),
+(3, 1, 'MS Dhoni');
