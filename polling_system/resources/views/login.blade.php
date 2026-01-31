@@ -1,36 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-
-<h2>Login</h2>
-
-<div id="msg" style="color:red;"></div>
-
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Password"><br><br>
-
-<button onclick="login()">Login</button>
-
-<script>
-function login(){
-  $.post('/login',{
-    email: $('#email').val(),
-    password: $('#password').val(),
-    _token: $('meta[name="csrf-token"]').attr('content')
-  }, function(res){
-    if(res.success){
-      window.location.href = '/polls';
-    } else {
-      $('#msg').text(res.error);
-    }
-  });
-}
-</script>
-
-</body>
-</html>
+@extends('layout')
+@section('content')
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Login</h4>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm" onsubmit="login(); return false;">
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" id="email" class="form-control" value="admin@test.com" required autocomplete="email">
+                        </div>
+                        <div class="mb-3">
+                            <label>Password</label>
+                            <input type="password" id="password" class="form-control" value="password" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <div id="msg" class="text-danger mt-2"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
